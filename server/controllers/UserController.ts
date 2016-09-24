@@ -1,17 +1,10 @@
-"use strict"
-
-import { PaginaModel } from '../models/PaginaModel'
+import {db,User,IModelsDAO,IModelsSchema} from '../models'
 import { Request, Response } from 'express'
 
-export class PaginaController {
-    Pagina: PaginaModel
-
-    constructor(models: any) {
-        this.Pagina = new PaginaModel(models)
-    }
+export class UserController {
 
     public find(req: Request, res: Response, next?: Function) {
-        return this.Pagina.findById(req.params.id)
+        return db.users.find(req.params.id)
             .then(pagina => {
                 return res.status(200).json(pagina)
             })
@@ -19,7 +12,7 @@ export class PaginaController {
     }
 
     public findAll(req: Request, res: Response, next?: Function) {
-        return this.Pagina.findAll()
+        return db.users.findAll()
             .then(pagina => {
                 return res.status(200).json(pagina)
             })
@@ -29,24 +22,24 @@ export class PaginaController {
     }
 
     public create(req: Request, res: Response, next?: Function) {
-        return this.Pagina.create(req.body)
+        return db.users.create(req.body)
             .then(pagina => {
                 return res.status(201).json(pagina)
             })
             .catch(error => res.status(400).json(error))
     }
 
-    public update(req: Request, res: Response, next?: Function) {
-        // TOdo Alterar parâmetro 'id' para req.user.id
-        return this.Pagina.update(req.body.id, req.body, 'idTemporario')
-            .then(pagina => {
-                return res.status(200).json(pagina)
-            })
-            .catch(error => res.status(400).json(error))
-    }
+    // public update(req: Request, res: Response, next?: Function) {
+    //     // TOdo Alterar parâmetro 'id' para req.user.id
+    //     return db.users.update(req.body.id, req.body, 'idTemporario')
+    //         .then(pagina => {
+    //             return res.status(200).json(pagina)
+    //         })
+    //         .catch(error => res.status(400).json(error))
+    // }
 
     public delete(req: Request, res: Response, next?: Function) {
-        return this.Pagina.delete(req.params.id)
+        return db.users.delete(req.params.id)
             .then((pagina) => {
                 return res.status(200).json({ success: true })
             })

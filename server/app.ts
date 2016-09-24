@@ -1,64 +1,104 @@
 ///<reference path="../typings/index.d.ts"/>
-import { Request, Response } from "express";
-import * as AllSchemas from "./models/Schemas";
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+import * as dotenv from 'dotenv'
+/**
+ * busca as variaveis de ambiente no arquivo .env
+ */
+dotenv.config()
+import { Request, Response } from 'express'
+import  * as express from 'express'
+import  * as path from 'path'
+import  * as favicon from 'serve-favicon'
+import  * as logger from 'morgan'
+import  * as cookieParser from 'cookie-parser'
+import  * as bodyParser from 'body-parser'
+/**
+ * importacao das rotas
+ */
+import * as routes from './routes'
+let app = express()
 
-const { rethinkdbconfig } = require('./config/rethinkdb');
-const Models = new AllSchemas.ClassSchemas(rethinkdbconfig)
-const Schemas = Models.GetModels()
-
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../clients/web')));
+app.use(logger('dev'))
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(express.static(path.join(__dirname, '../clients/web')))
+module.exports = app
 
-// ROUTES
-import { PaginaRouter } from "./routes/PaginaRouter"
-app.use('/', new PaginaRouter(Schemas).getRouter());
+export class Application {
+  app: express.Application
 
-// catch 404 and forward to error handler
-app.use((req: Request, res: Response, next: Function) => {
-  var err: any = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  constructor() {
 
-// error handlers
+    /**
+     * definicao dos objetos do banco de dados
+     */
+    this.app = express()
+    this.app = this.handleParsers(this.app)
+    this.app = this.handleLogs(this.app)
+    this.app = this.handleStatics(this.app)
+    this.app = this.handleRoutes(this.app)
+    this.app = this.handleError(this.app)
+  }
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err: any, req: Request, res: Response, next: Function) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
+
+  handleParsers(app: express.Application): express.Application {
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: false }))
+    app.use(cookieParser())
+    return app
+  }
+
+  handleLogs(app: express.Application): express.Application {
+    app.use(logger('dev'))
+    return app
+  }
+
+  handleStatics(app: express.Application): express.Application {
+    app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+    app.use(express.static(path.join(__dirname, '../clients/web')))
+    return app
+  }
+
+  handleRoutes(app: express.Application): express.Application {
+    /**
+     * chamada no index para chamar todas as rotas
+     */
+    app = routes.main.callRoutes(app)
+    // catch 404 and forward to error handler
+    app.use((req: Request, res: Response, next: Function) => {
+      let err: any = new Error('Not Found')
+      err.status = 404
+      next(err)
+    })
+    return app
+  }
+
+  handleError(app: express.Application): express.Application {
+      // error handlers
+
+      // development error handler
+      // will print stacktrace
+      if (app.get('env') === 'development') {
+        app.use(function(err: any, req: Request, res: Response, next: Function) {
+          res.status(err.status || 500)
+          res.render('error', {
+            message: err.message,
+            error: err
+          });
+        });
+      }
+
+      // production error handler
+      // no stacktraces leaked to user
+      app.use(function(err: any, req: Request, res: Response, next: Function) {
+        res.status(err.status || 500)
+        res.render('error', {
+          message: err.message,
+          error: {}
+        })
+      })
+      return app;
+  }
 }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err: any, req: Request, res: Response, next: Function) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
 
-module.exports = app;

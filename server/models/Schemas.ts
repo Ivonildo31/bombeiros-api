@@ -1,46 +1,64 @@
-import { PaginaModel } from "../models/PaginaModel";
-import { rethinkdbconfig } from "../config/rethinkdb";
+import {userModel,UserDAO} from '../models/User'
+import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
+import  * as thinky from 'thinky'
 
-const _ = require('lodash')
-const thinky = require("thinky")
-const shortid = require('shortid')
-const bluebird = require("bluebird")
+/**
+ * 
+ * para uma interface forte, sempre é bom declarar aqui os elmentos da as persistencias
+ * a declaracao faz parte do escopo de criacao e coordenacao de todo o schema
+ * 
+ * interface do dao
+ * 
+ * @interface IModelsDAO
+ */
+
+export interface IModelsDAO {
+    users: UserDAO
+}
+
+/**
+ * interface do modelo pelo schema declarado
+ * 
+ * @interface IModelsSchema
+ */
+
+export interface IModelsSchema {
+    User: any
+}
+
+
+
 
 export class ClassSchemas {
-    T: any
-    allModels: any = {}
-    Models: any = {}
+    private modelSchema: IModelsSchema
+    private models: IModelsDAO
+    private t: any
 
-    constructor(config: rethinkdbconfig) {
-        this.T = thinky(config)
-        this.geraAllModels()
-        this.geraModels()
+    constructor(config: IRethinkDBConfig) {
+        this.t = thinky(rethinkdbconfig)
+        this.generateModelSchema()
+        this.generateModels()
     }
 
-    private geraAllModels() {
-        this.allModels.Pagina = this.T.createModel("Pagina", {
-            id: this.T.type.string().default(() => shortid.generate()),
-            nome: this.T.type.string().required(),
-            descricao: this.T.type.string().required(),
-            lastUpdate: this.T.type.object().schema({
-                userId: this.T.type.string().required(),
-                updatedAt: this.T.type.date().default(new Date(Date.now())),
-                nome: this.T.type.string().required(),
-                descricao: this.T.type.string().required()
-            }),
-            insertedAt: this.T.type.date().default(new Date(Date.now()))
-        })
+    public GetModels(): IModelsDAO {
+        return this.models
     }
-    
-    private geraModels() {
-        this.Models.Pagina = new PaginaModel(this.GetAllModels()).Pagina
+
+    public GetModelSchema(): IModelsSchema {
+        return this.modelSchema
+    }
+
+    private generateModelSchema() {
+        this.modelSchema.User = this.t.createModel('users', userModel(this.t))
+    }
+
+    private generateModels() {
+        this.models.users = new UserDAO(this.GetAllModels())
     }
 
     private GetAllModels() {
-        return this.allModels
-    }
-
-    public GetModels() {
-        return this.Models
+        return this.modelSchema
     }
 }
+
+

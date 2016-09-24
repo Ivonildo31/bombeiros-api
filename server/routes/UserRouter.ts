@@ -1,13 +1,14 @@
-import { PaginaController } from "../controllers/PaginaController";
+import { UserController } from '../controllers/UserController'
 import { Request, Response } from 'express'
-import * as express from "express";
+import * as express from 'express'
+import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
 
-export class PaginaRouter {
-    Controller: PaginaController
+export class UserRouter {
+    Controller: UserController
     router: express.Router
 
-    constructor (models: any){
-        this.Controller = new PaginaController(models)
+    constructor (rethinkdbconfig: IRethinkDBConfig) {
+        this.Controller = new UserController(models)
         this.router = express.Router()
         this.routers()
     }
