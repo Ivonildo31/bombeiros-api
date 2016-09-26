@@ -26,13 +26,10 @@ export interface IModelsSchema {
     User: any
 }
 
-
-
-
 export class ClassSchemas {
-    private modelSchema: IModelsSchema
-    private models: IModelsDAO
-    private t: any
+    modelSchema: IModelsSchema
+    models: IModelsDAO
+    t: any
 
     constructor(config: IRethinkDBConfig) {
         this.t = thinky(rethinkdbconfig)
@@ -49,16 +46,18 @@ export class ClassSchemas {
     }
 
     private generateModelSchema() {
-        this.modelSchema.User = this.t.createModel('users', userModel(this.t))
+        this.modelSchema = {
+            User: this.t.createModel('users', userModel(this.t))
+        }
     }
 
     private generateModels() {
-        this.models.users = new UserDAO(this.GetAllModels())
+        this.models = {
+            users : new UserDAO(this.GetAllModels())
+        }
     }
 
     private GetAllModels() {
         return this.modelSchema
     }
 }
-
-

@@ -11,20 +11,13 @@ import  * as favicon from 'serve-favicon'
 import  * as logger from 'morgan'
 import  * as cookieParser from 'cookie-parser'
 import  * as bodyParser from 'body-parser'
+import { rethinkdbconfig } from './config/rethinkdb'
 /**
  * importacao das rotas
  */
 import * as routes from './routes'
-let app = express()
 
-
-// uncomment after placing your favicon in /public
-app.use(logger('dev'))
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
-app.use(express.static(path.join(__dirname, '../clients/web')))
-module.exports = app
-
-export class Application {
+class Application {
   app: express.Application
 
   constructor() {
@@ -35,11 +28,10 @@ export class Application {
     this.app = express()
     this.app = this.handleParsers(this.app)
     this.app = this.handleLogs(this.app)
-    this.app = this.handleStatics(this.app)
+    // this.app = this.handleStatics(this.app)
     this.app = this.handleRoutes(this.app)
     this.app = this.handleError(this.app)
   }
-
 
   handleParsers(app: express.Application): express.Application {
     app.use(bodyParser.json())
@@ -63,7 +55,7 @@ export class Application {
     /**
      * chamada no index para chamar todas as rotas
      */
-    app = routes.main.callRoutes(app)
+    app = routes.main.callRoutes(app,rethinkdbconfig)
     // catch 404 and forward to error handler
     app.use((req: Request, res: Response, next: Function) => {
       let err: any = new Error('Not Found')
@@ -81,24 +73,27 @@ export class Application {
       if (app.get('env') === 'development') {
         app.use(function(err: any, req: Request, res: Response, next: Function) {
           res.status(err.status || 500)
-          res.render('error', {
+          res.json({
             message: err.message,
             error: err
-          });
-        });
+          })
+        })
       }
 
       // production error handler
       // no stacktraces leaked to user
       app.use(function(err: any, req: Request, res: Response, next: Function) {
         res.status(err.status || 500)
-        res.render('error', {
+        res.json({
           message: err.message,
           error: {}
         })
       })
-      return app;
+      return app
   }
 }
 
-
+/**
+ * para enviar a aplicacao a nivel do server será sempre levado o objeto app criado ao instanciar a aplicacao
+ */
+export let application = (new Application()).app

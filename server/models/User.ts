@@ -1,25 +1,25 @@
 import {DAO, baseModel, BaseModel} from './Model'
-
+import {IUser}  from '../interfaces/IUser'
 /**
  * Model para os usuários
  * 
  * @class User
- * @implements {Model.DAO<Model.IUser>}
+ * @implements {Model.DAO<Model.User>}
  */
 
 export class User extends BaseModel {
     name: string
-    constructor(name: string,id?: string) {
-        super(id)
-        this.name = name
+    constructor(obj: IUser) {
+        super(obj)
+        this.name = obj.name
     }
 }
 
-export class UserDAO implements DAO<User> {
+export class UserDAO implements DAO<IUser> {
     users: any
 
     constructor(models: any) {
-        this.users = models.Pagina
+        this.users = models.User
     }
 
     /**
@@ -27,7 +27,7 @@ export class UserDAO implements DAO<User> {
      * 
      * @returns
      */
-    public findAll(): Promise<Array<User>> {
+    public findAll(): Promise<Array<IUser>> {
         return this.users.run()
     }
 
@@ -37,7 +37,7 @@ export class UserDAO implements DAO<User> {
      * @param {string} nome
      * @returns
      */
-    public find(id: string): Promise<User> {
+    public find(id: string): Promise<IUser> {
         return this.users.get(id)
     }
 
@@ -47,8 +47,9 @@ export class UserDAO implements DAO<User> {
      * @param {any} params
      * @returns
      */
-    public create(user: User): Promise<User> {
-        return (new this.users(user)).save()
+    public create(user: IUser): Promise<IUser> {
+        let _user = new User(user)
+        return (new this.users(_user)).save()
     }
 
     /**
@@ -59,7 +60,7 @@ export class UserDAO implements DAO<User> {
      * @param {string} userId
      * @returns
      */
-    public update(user: User): Promise<User> {
+    public update(user: User): Promise<IUser> {
         return this.find(user.id).then((pagina: any) => {
             // if (pagina.nome !== newParams.nome || pagina.descricao !== newParams.descricao) {
             //     let { nome, descricao } = newParams
@@ -92,10 +93,8 @@ export class UserDAO implements DAO<User> {
     }
 }
 
-
-
-export const userModel = (T: any) => {
-  let ret = {name: T.type.string()}
-  Object.assign(ret , baseModel)
+export const userModel = (t: any) => {
+  let ret = {}
+  Object.assign(ret , baseModel(t))
   return ret
 }

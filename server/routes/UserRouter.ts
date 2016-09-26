@@ -1,42 +1,38 @@
 import { UserController } from '../controllers/UserController'
-import { Request, Response } from 'express'
-import * as express from 'express'
-import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
+import {BaseRouter} from './BaseRouter'
+import { Model } from '../models'
+import {Router} from 'express'
 
-export class UserRouter {
-    Controller: UserController
-    router: express.Router
+export class UserRouter extends BaseRouter {
+    controller: UserController
+    router: Router
 
-    constructor (rethinkdbconfig: IRethinkDBConfig) {
-        this.Controller = new UserController(models)
-        this.router = express.Router()
+    constructor (models: Model) {
+        super()
+        this.controller = new UserController(models)
+        this.router = Router()
         this.routers()
     }
 
     public routers() {
-        let ctrl = this
+        let ctrl = this.controller
         /* GET todas as páginas. */
-        this.router.get('/findall', (req, res, next) => ctrl.Controller.findAll(req, res, next)) 
+        this.router.get('/', (req, res, next) => this.respond(ctrl.findAll(req, res, next),res))
 
         /* GET busca a página com o id. */
-        this.router.get('/find/:id', (req, res, next) => ctrl.Controller.find(req, res, next))
+        this.router.get('/:id', (req, res, next) => this.respond(ctrl.find(req, res, next),res))
 
         /* POST cria nova página. */
-        this.router.post('/create', (req, res, next) => ctrl.Controller.create(req, res, next))
+        this.router.post('/', (req, res, next) => this.respond(ctrl.create(req, res, next),res))
 
         /* PUT atualiza a página. */
-        this.router.put('/update', (req, res, next) => ctrl.Controller.update(req, res, next))
+        // this.router.put('/update', (req, res, next) => ctrl.Controller.update(req, res, next))
 
         /* DELETE deleta a página com o id. */
-        this.router.delete('/delete/:id', (req, res, next) => ctrl.Controller.delete(req, res, next))
-
-        /* GET home page. */
-        this.router.get('/', function(req: Request, res: Response, next: Function) {
-            res.render('index', { title: 'Express' })
-        });
+        this.router.delete('/delete/:id', (req, res, next) => this.respond(ctrl.delete(req, res, next),res))
     }
 
-    public getRouter(): express.Router {
+    public getRouter(): Router {
         return this.router
     }
 }

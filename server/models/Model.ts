@@ -1,4 +1,5 @@
 import  * as shortid from 'shortid'
+import {IModel}  from '../interfaces/IModel'
 /**
  * Model
  */
@@ -12,13 +13,13 @@ export class BaseModel {
   id: string
   insertedAt: Date
   userId: string
-  constructor(id?: string,userId?: string) {
-    if (!id) {
+  constructor(obj: IModel) {
+    if (!obj.id) {
       this.id = shortid.generate()
     } else {
-      this.id = id
+      this.id = obj.id
     }
-    this.userId = userId || null
+    this.userId = obj.userId || null
     this.insertedAt = new Date()
   }
 }
@@ -26,6 +27,7 @@ export class BaseModel {
 export const baseModel = (T: any) : Object => {
   return {
     id: T.type.string().default(() => shortid.generate()),
+    name: T.type.string().required(),
     userId: T.type.string(),
     insertedAt: T.type.date().default(new Date(Date.now()))
   }

@@ -1,32 +1,45 @@
-import {db,User,IModelsDAO,IModelsSchema} from '../models'
+import {APIError,User,Model,IModelsDAO,IModelsSchema} from '../models'
 import { Request, Response } from 'express'
+import { IPersistController } from './IControllers'
 
-export class UserController {
-
-    public find(req: Request, res: Response, next?: Function) {
-        return db.users.find(req.params.id)
-            .then(pagina => {
-                return res.status(200).json(pagina)
-            })
-            .catch(error => res.status(400).json(error))
+export class UserController implements IPersistController<User> {
+    db: IModelsDAO
+    models: IModelsSchema
+    public constructor(model: Model) {
+        this.db = model.db
+        this.models = model.entities
     }
-
-    public findAll(req: Request, res: Response, next?: Function) {
-        return db.users.findAll()
-            .then(pagina => {
-                return res.status(200).json(pagina)
+    public find(req: Request, res: Response, next?: Function): Promise<User> {
+        return this.db.users.find(req.params.id)
+            .then(users => {
+                res.status(200)
+                return users
             })
             .catch(error => {
-                return res.status(400).json({ error })
+                throw new APIError(error,400)
             })
     }
 
-    public create(req: Request, res: Response, next?: Function) {
-        return db.users.create(req.body)
-            .then(pagina => {
-                return res.status(201).json(pagina)
+    public findAll(req: Request, res: Response, next?: Function): Promise<[User]> {
+        return this.db.users.findAll()
+            .then(users => {
+                res.status(201)
+                return users
             })
-            .catch(error => res.status(400).json(error))
+            .catch(error => {
+                throw new APIError(error,400)
+            })
+    }
+
+    public create(req: Request, res: Response, next?: Function): Promise<User> {
+        return this.db.users.create(req.body)
+            .then(user => {
+                res.status(201)
+                return user
+            })
+            .catch(error => {
+                throw new APIError(error,400)
+            })
     }
 
     // public update(req: Request, res: Response, next?: Function) {
@@ -38,11 +51,14 @@ export class UserController {
     //         .catch(error => res.status(400).json(error))
     // }
 
-    public delete(req: Request, res: Response, next?: Function) {
-        return db.users.delete(req.params.id)
-            .then((pagina) => {
-                return res.status(200).json({ success: true })
+    public delete(req: Request, res: Response, next?: Function): Promise<boolean> {
+        return this.db.users.delete(req.params.id)
+            .then((isDeleted) => {
+                res.status(200)
+                return isDeleted
             })
-            .catch(error => res.status(400).json(error))
+            .catch(error => {
+                throw new APIError(error,400)
+            })
     }
 }
