@@ -1,7 +1,10 @@
-import {userModel,UserDAO} from '../models/User'
+import {UserDAO} from '../models/User'
 import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
 import * as thinky from 'thinky'
 import {Thinky} from 'thinky'
+import  * as shortid from 'shortid'
+
+
 
 /**
  * 
@@ -48,7 +51,8 @@ export class ClassSchemas {
 
     private generateModelSchema() {
         this.modelSchema = {
-            User: this.t.createModel('users', userModel(this.t))
+            User: this.t.createModel('users',{   id: this.t.type.string().default(() => shortid.generate()),
+                                                 insertedAt: this.t.type.date().default(new Date(Date.now()))})
         }
     }
 
@@ -62,3 +66,5 @@ export class ClassSchemas {
         return this.modelSchema
     }
 }
+
+

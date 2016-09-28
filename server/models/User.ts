@@ -1,6 +1,7 @@
 import {DAO, baseModel, BaseModel} from './Model'
 import {IUserInterface} from '../interfaces/IUserInterface'
-import {Thinky} from 'thinky'
+import * as thinky from 'thinky'
+import  * as shortid from 'shortid'
 /**
  * Model para os usuários
  * 
@@ -88,8 +89,4 @@ export class UserDAO implements DAO<IUserInterface> {
     }
 }
 
-export const userModel = (t: Thinky) => {
-  let ret = {}
-  Object.assign(ret , baseModel(t))
-  return ret
-}
+
