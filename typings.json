@@ -14,6 +14,7 @@
     "rethinkdb": "registry:dt/rethinkdb#1.10.0+20160811111312",
     "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
-    "shortid": "registry:dt/shortid#0.0.0+20160316155526"
+    "shortid": "registry:dt/shortid#0.0.0+20160316155526",
+    "thinky": "github:xdevelsistemas/typings-thinky#af288fdaf7ae179688f1fd89222e1062ed0c94ec"
   }
 }

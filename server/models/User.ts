@@ -1,5 +1,6 @@
 import {DAO, baseModel, BaseModel} from './Model'
-import {IUser}  from '../interfaces/IUser'
+import {IUserInterface} from '../interfaces/IUserInterface'
+import {Thinky} from 'thinky'
 /**
  * Model para os usuários
  * 
@@ -7,15 +8,17 @@ import {IUser}  from '../interfaces/IUser'
  * @implements {Model.DAO<Model.User>}
  */
 
-export class User extends BaseModel {
-    name: string
-    constructor(obj: IUser) {
+export class User extends BaseModel implements IUserInterface {
+    email: string
+    userId: string
+    constructor(obj: IUserInterface) {
         super(obj)
-        this.name = obj.name
+        this.email = obj.email
+        this.userId = obj.userId
     }
 }
 
-export class UserDAO implements DAO<IUser> {
+export class UserDAO implements DAO<IUserInterface> {
     users: any
 
     constructor(models: any) {
@@ -27,7 +30,7 @@ export class UserDAO implements DAO<IUser> {
      * 
      * @returns
      */
-    public findAll(): Promise<Array<IUser>> {
+    public findAll(): Promise<Array<IUserInterface>> {
         return this.users.run()
     }
 
@@ -37,7 +40,7 @@ export class UserDAO implements DAO<IUser> {
      * @param {string} nome
      * @returns
      */
-    public find(id: string): Promise<IUser> {
+    public find(id: string): Promise<IUserInterface> {
         return this.users.get(id)
     }
 
@@ -47,7 +50,7 @@ export class UserDAO implements DAO<IUser> {
      * @param {any} params
      * @returns
      */
-    public create(user: IUser): Promise<IUser> {
+    public create(user: IUserInterface): Promise<IUserInterface> {
         let _user = new User(user)
         return (new this.users(_user)).save()
     }
@@ -60,22 +63,14 @@ export class UserDAO implements DAO<IUser> {
      * @param {string} userId
      * @returns
      */
-    public update(user: User): Promise<IUser> {
-        return this.find(user.id).then((pagina: any) => {
-            // if (pagina.nome !== newParams.nome || pagina.descricao !== newParams.descricao) {
-            //     let { nome, descricao } = newParams
-            //     let lastUpdate = {
-            //         userId,
-            //         nome: pagina.nome,
-            //         descricao: pagina.descricao,
-            //         updatedAt: new Date(Date.now())
-            //     }
-
-            //     return this.find(id).update({ nome, descricao, lastUpdate })
-            // } else {
-            //     return this.find(id)
-            // }
-            return user
+    public update(newUser: IUserInterface): Promise<IUserInterface> {
+        return this.find(newUser.id).then((oldUser: IUserInterface) => {
+            if (oldUser.email !== newUser.email || oldUser.userId !== newUser.userId) {
+                return this.users.
+            } else {
+                return Promise.resolve(oldUser)
+            }
+            return oldUser
         })
     }
 
@@ -93,7 +88,7 @@ export class UserDAO implements DAO<IUser> {
     }
 }
 
-export const userModel = (t: any) => {
+export const userModel = (t: Thinky) => {
   let ret = {}
   Object.assign(ret , baseModel(t))
   return ret

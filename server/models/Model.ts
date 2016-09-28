@@ -1,5 +1,6 @@
 import  * as shortid from 'shortid'
-import {IModel}  from '../interfaces/IModel'
+import {IModelInterface}  from '../interfaces/IModelInterface'
+import {Thinky} from 'thinky'
 /**
  * Model
  */
@@ -13,22 +14,19 @@ export class BaseModel {
   id: string
   insertedAt: Date
   userId: string
-  constructor(obj: IModel) {
+  constructor(obj: IModelInterface) {
     if (!obj.id) {
       this.id = shortid.generate()
     } else {
       this.id = obj.id
     }
-    this.userId = obj.userId || null
     this.insertedAt = new Date()
   }
 }
 
-export const baseModel = (T: any) : Object => {
+export const baseModel = (T: Thinky) : Object => {
   return {
     id: T.type.string().default(() => shortid.generate()),
-    name: T.type.string().required(),
-    userId: T.type.string(),
     insertedAt: T.type.date().default(new Date(Date.now()))
   }
 }

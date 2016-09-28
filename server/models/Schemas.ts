@@ -1,6 +1,7 @@
 import {userModel,UserDAO} from '../models/User'
 import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
-import  * as thinky from 'thinky'
+import * as thinky from 'thinky'
+import {Thinky} from 'thinky'
 
 /**
  * 
@@ -29,7 +30,7 @@ export interface IModelsSchema {
 export class ClassSchemas {
     modelSchema: IModelsSchema
     models: IModelsDAO
-    t: any
+    t: Thinky
 
     constructor(config: IRethinkDBConfig) {
         this.t = thinky(rethinkdbconfig)
