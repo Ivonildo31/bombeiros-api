@@ -33,5 +33,3 @@ enum Etype {
     polygon = 2,
     baixo = 3
 }
-
-

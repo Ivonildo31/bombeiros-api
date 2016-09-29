@@ -1,6 +1,7 @@
 import  * as shortid from 'shortid'
 import {IModelInterface}  from '../interfaces/IModelInterface'
 import {Thinky} from 'thinky'
+import {Thenable} from 'bluebird'
 /**
  * Model
  */
@@ -32,9 +33,9 @@ export const baseModel = (T: Thinky) : Object => {
 }
 
 export interface DAO<T extends BaseModel> {
-    create(t: T): Promise<T>
-    find(id: string): Promise<T>
-    findAll(): Promise<T[]>
-    update(t: T): Promise<T>
-    delete(id: string): Promise<boolean>
+    create(t: T): Thenable<T>
+    find(id: string): Thenable<T>
+    findAll(): Thenable<T[]>
+    update(t: T): Thenable<T>
+    delete(id: string): Thenable<boolean>
 }

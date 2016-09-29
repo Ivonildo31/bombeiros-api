@@ -1,7 +1,7 @@
-import {DAO, baseModel, BaseModel} from './Model'
+import {DAO, BaseModel} from './Model'
 import {IUserInterface} from '../interfaces/IUserInterface'
 import * as thinky from 'thinky'
-import  * as shortid from 'shortid'
+import {Thenable} from 'bluebird'
 /**
  * Model para os usuários
  * 
@@ -20,7 +20,7 @@ export class User extends BaseModel implements IUserInterface {
 }
 
 export class UserDAO implements DAO<IUserInterface> {
-    users: any
+    users: thinky.Model<any,any,any>
 
     constructor(models: any) {
         this.users = models.User
@@ -31,7 +31,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * 
      * @returns
      */
-    public findAll(): Promise<Array<IUserInterface>> {
+    public findAll(): Thenable<Array<IUserInterface>> {
         return this.users.run()
     }
 
@@ -41,8 +41,8 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} nome
      * @returns
      */
-    public find(id: string): Promise<IUserInterface> {
-        return this.users.get(id)
+    public find(id: string): Thenable<IUserInterface> {
+        return this.users.get(id).run()
     }
 
     /**
@@ -51,7 +51,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {any} params
      * @returns
      */
-    public create(user: IUserInterface): Promise<IUserInterface> {
+    public create(user: IUserInterface): Thenable<IUserInterface> {
         let _user = new User(user)
         return (new this.users(_user)).save()
     }
@@ -64,14 +64,13 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} userId
      * @returns
      */
-    public update(newUser: IUserInterface): Promise<IUserInterface> {
+    public update(newUser: IUserInterface): Thenable<IUserInterface> {
         return this.find(newUser.id).then((oldUser: IUserInterface) => {
             if (oldUser.email !== newUser.email || oldUser.userId !== newUser.userId) {
-                return this.users.
+                return this.users.save(newUser).then(d => newUser)
             } else {
                 return Promise.resolve(oldUser)
             }
-            return oldUser
         })
     }
 
@@ -81,12 +80,9 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} paginaId
      * @returns
      */
-    public delete(id: string): Promise<boolean> {
+    public delete(id: string): Thenable<boolean> {
         return this.find(id)
         .then((c: any) => c.delete())
         .then(() => true)
-        .catch(() => false)
     }
 }
-
-

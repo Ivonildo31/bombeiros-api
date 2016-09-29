@@ -4,8 +4,6 @@ import * as thinky from 'thinky'
 import {Thinky} from 'thinky'
 import  * as shortid from 'shortid'
 
-
-
 /**
  * 
  * para uma interface forte, sempre é bom declarar aqui os elmentos da as persistencias
@@ -27,7 +25,7 @@ export interface IModelsDAO {
  */
 
 export interface IModelsSchema {
-    User: any
+    User: thinky.Model<any,any,any>
 }
 
 export class ClassSchemas {
@@ -66,5 +64,3 @@ export class ClassSchemas {
         return this.modelSchema
     }
 }
-
-
