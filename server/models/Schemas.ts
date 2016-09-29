@@ -50,6 +50,8 @@ export class ClassSchemas {
     private generateModelSchema() {
         this.modelSchema = {
             User: this.t.createModel('users',{   id: this.t.type.string().default(() => shortid.generate()),
+                                                 userId: this.t.type.string().required(),
+                                                 email: this.t.type.string(),
                                                  insertedAt: this.t.type.date().default(new Date(Date.now()))})
         }
     }

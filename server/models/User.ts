@@ -1,7 +1,7 @@
 import {DAO, BaseModel} from './Model'
 import {IUserInterface} from '../interfaces/IUserInterface'
 import * as thinky from 'thinky'
-import {Thenable} from 'bluebird'
+import * as Bluebird from 'bluebird'
 /**
  * Model para os usuários
  * 
@@ -10,7 +10,7 @@ import {Thenable} from 'bluebird'
  */
 
 export class User extends BaseModel implements IUserInterface {
-    email: string
+    email?: string
     userId: string
     constructor(obj: IUserInterface) {
         super(obj)
@@ -31,7 +31,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * 
      * @returns
      */
-    public findAll(): Thenable<Array<IUserInterface>> {
+    public findAll(): Bluebird<IUserInterface[]> {
         return this.users.run()
     }
 
@@ -41,7 +41,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} nome
      * @returns
      */
-    public find(id: string): Thenable<IUserInterface> {
+    public find(id: string): Bluebird<IUserInterface> {
         return this.users.get(id).run()
     }
 
@@ -51,7 +51,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {any} params
      * @returns
      */
-    public create(user: IUserInterface): Thenable<IUserInterface> {
+    public create(user: IUserInterface): Bluebird<IUserInterface> {
         let _user = new User(user)
         return (new this.users(_user)).save()
     }
@@ -64,7 +64,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} userId
      * @returns
      */
-    public update(newUser: IUserInterface): Thenable<IUserInterface> {
+    public update(newUser: IUserInterface): Bluebird<IUserInterface> {
         return this.find(newUser.id).then((oldUser: IUserInterface) => {
             if (oldUser.email !== newUser.email || oldUser.userId !== newUser.userId) {
                 return this.users.save(newUser).then(d => newUser)
@@ -80,7 +80,7 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {string} paginaId
      * @returns
      */
-    public delete(id: string): Thenable<boolean> {
+    public delete(id: string): Bluebird<boolean> {
         return this.find(id)
         .then((c: any) => c.delete())
         .then(() => true)

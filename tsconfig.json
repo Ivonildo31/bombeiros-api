@@ -9,5 +9,10 @@
     "exclude": [
         "node_modules",
         "jspm_packages"
+    ],
+    "filesGlob" : [
+        "server/**/*.ts",
+        "!node_modules/**",
+        "!typings/**"
     ]
 }

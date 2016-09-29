@@ -42,6 +42,5 @@ jspm_packages
 .node_repl_history
 !gulpfile.js
 server/**/*.js
-clients/**/*.js
 server/**/*.js.map
-clients/**/*.js.map
+

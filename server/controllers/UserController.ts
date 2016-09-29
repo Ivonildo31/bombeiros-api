@@ -1,6 +1,7 @@
 import {APIError,User,Model,IModelsDAO,IModelsSchema} from '../models'
 import { Request, Response } from 'express'
 import { IPersistController } from './IControllers'
+import  * as Bluebird  from 'bluebird'
 
 export class UserController implements IPersistController<User> {
     db: IModelsDAO
@@ -9,7 +10,7 @@ export class UserController implements IPersistController<User> {
         this.db = model.db
         this.models = model.entities
     }
-    public find(req: Request, res: Response, next?: Function): Promise<User> {
+    public find(req: Request, res: Response, next?: Function): Bluebird<User> {
         return this.db.users.find(req.params.id)
             .then(users => {
                 res.status(200)
@@ -20,7 +21,7 @@ export class UserController implements IPersistController<User> {
             })
     }
 
-    public findAll(req: Request, res: Response, next?: Function): Promise<[User]> {
+    public findAll(req: Request, res: Response, next?: Function): Bluebird<User[]> {
         return this.db.users.findAll()
             .then(users => {
                 res.status(201)
@@ -31,7 +32,7 @@ export class UserController implements IPersistController<User> {
             })
     }
 
-    public create(req: Request, res: Response, next?: Function): Promise<User> {
+    public create(req: Request, res: Response, next?: Function): Bluebird<User> {
         return this.db.users.create(req.body)
             .then(user => {
                 res.status(201)
@@ -51,7 +52,7 @@ export class UserController implements IPersistController<User> {
     //         .catch(error => res.status(400).json(error))
     // }
 
-    public delete(req: Request, res: Response, next?: Function): Promise<boolean> {
+    public delete(req: Request, res: Response, next?: Function): Bluebird<boolean> {
         return this.db.users.delete(req.params.id)
             .then((isDeleted) => {
                 res.status(200)
