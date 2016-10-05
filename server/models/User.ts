@@ -1,6 +1,6 @@
 import {DAO, BaseModel} from './Model'
 import {IModelsSchema} from './Schemas'
-import {IUser}  from '../interfaces/IUser'
+import {IUser} from '../interfaces/IUser'
 import * as thinky from 'thinky'
 import * as  Bluebird from 'bluebird'
 /**
@@ -12,25 +12,11 @@ import * as  Bluebird from 'bluebird'
 
 export class User extends BaseModel implements IUser {
     name: string
-    // tpPessoa: TypePerson
-    // tpUsuario: TypeUser
-    // active: boolean
-    // numDocFed: string
-    // telephone: string
-    // email: string
-    // password: string
-    // zipCode: string
-    // address: string
-    // number: string
-    // complement: string
-    // neighbor: string
-    // state: string
-    // country: string
-    // contractor: IUser
-    // vehicles: [IUserVehicle]
+    email: string
     constructor(obj: IUser) {
         super(obj)
         this.name = obj.name
+        this.email = obj.email
     }
 }
 

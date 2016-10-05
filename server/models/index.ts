@@ -2,6 +2,7 @@ import {ClassSchemas, IModelsDAO ,IModelsSchema} from './Schemas'
 import { IRethinkDBConfig } from '../config/rethinkdb'
 
 export * from '../interfaces/IUser'
+export * from '../interfaces/IAlert'
 export {IResultSearch,IDAO,BaseModel} from './Model'
 export {User,UserDAO} from './User'
 export {APIError} from './APIError'
