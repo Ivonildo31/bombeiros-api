@@ -1,6 +1,6 @@
 {
   "globalDependencies": {
-    "bluebird": "registry:dt/bluebird#3.0.0+20160811111256",
+    "bluebird": "registry:dt/bluebird#3.0.0+20160907110115",
     "body-parser": "registry:dt/body-parser#0.0.0+20160619023215",
     "cookie-parser": "registry:dt/cookie-parser#1.3.4+20160316155526",
     "dotenv": "registry:dt/dotenv#2.0.0+20160327131627",
@@ -15,6 +15,6 @@
     "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
     "shortid": "registry:dt/shortid#0.0.0+20160316155526",
-    "thinky": "github:xdevelsistemas/typings-thinky#af288fdaf7ae179688f1fd89222e1062ed0c94ec"
+    "thinky": "github:xdevelsistemas/typings-thinky#4259479b9c2ea11b1dcf0db11dff35c975653daa"
   }
 }

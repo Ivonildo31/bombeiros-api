@@ -1,8 +1,21 @@
 import {UserDAO} from '../models/User'
 import { IRethinkDBConfig,rethinkdbconfig } from '../config/rethinkdb'
 import * as thinky from 'thinky'
-import {Thinky} from 'thinky'
 import  * as shortid from 'shortid'
+
+/**
+ * 
+ * tipos de dados para persistir no schema 
+ * com esse tipo de dados é possivel criar o schema
+ * TODO 
+ * @export
+ * @interface IModelsDAO
+ */
+// const model =  { id: this.t.type.string().default(() => shortid.generate()),
+//                  name: this.t.type.string().required(),
+//                  userId: this.t.type.string(),
+//                  insertedAt: this.t.type.date().default(new Date(Date.now()))
+// }
 
 /**
  * 
@@ -13,7 +26,6 @@ import  * as shortid from 'shortid'
  * 
  * @interface IModelsDAO
  */
-
 export interface IModelsDAO {
     users: UserDAO
 }
@@ -25,14 +37,13 @@ export interface IModelsDAO {
  */
 
 export interface IModelsSchema {
-    User: thinky.Model<any,any,any>
+    User: any
 }
 
 export class ClassSchemas {
     modelSchema: IModelsSchema
     models: IModelsDAO
-    t: Thinky
-
+    t: thinky.Thinky
     constructor(config: IRethinkDBConfig) {
         this.t = thinky(rethinkdbconfig)
         this.generateModelSchema()
@@ -49,10 +60,12 @@ export class ClassSchemas {
 
     private generateModelSchema() {
         this.modelSchema = {
-            User: this.t.createModel('users',{   id: this.t.type.string().default(() => shortid.generate()),
-                                                 userId: this.t.type.string().required(),
-                                                 email: this.t.type.string(),
-                                                 insertedAt: this.t.type.date().default(new Date(Date.now()))})
+            User: this.t.createModel('users', {
+                id: this.t.type.string().default(() => shortid.generate()),
+                name: this.t.type.string().required(),
+                userId: this.t.type.string(),
+                insertedAt: this.t.type.date().default(new Date(Date.now()))
+            })
         }
     }
 

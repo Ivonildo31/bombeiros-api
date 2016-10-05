@@ -1,7 +1,8 @@
 import {DAO, BaseModel} from './Model'
-import {IUserInterface} from '../interfaces/IUserInterface'
+import {IModelsSchema} from './Schemas'
+import {IUser}  from '../interfaces/IUser'
 import * as thinky from 'thinky'
-import * as Bluebird from 'bluebird'
+import * as  Bluebird from 'bluebird'
 /**
  * Model para os usuários
  * 
@@ -9,40 +10,35 @@ import * as Bluebird from 'bluebird'
  * @implements {Model.DAO<Model.User>}
  */
 
-export class User extends BaseModel implements IUserInterface {
-    email?: string
-    userId: string
-    constructor(obj: IUserInterface) {
+export class User extends BaseModel implements IUser {
+    name: string
+    // tpPessoa: TypePerson
+    // tpUsuario: TypeUser
+    // active: boolean
+    // numDocFed: string
+    // telephone: string
+    // email: string
+    // password: string
+    // zipCode: string
+    // address: string
+    // number: string
+    // complement: string
+    // neighbor: string
+    // state: string
+    // country: string
+    // contractor: IUser
+    // vehicles: [IUserVehicle]
+    constructor(obj: IUser) {
         super(obj)
-        this.email = obj.email
-        this.userId = obj.userId
+        this.name = obj.name
     }
 }
 
-export class UserDAO implements DAO<IUserInterface> {
-    users: thinky.Model<any,any,any>
+export class UserDAO extends DAO<IUser> {
+    collection: thinky.Model<any,any,any>
 
-    constructor(models: any) {
-        this.users = models.User
-    }
-
-    /**
-     * Busca todas as páginas
-     * 
-     * @returns
-     */
-    public findAll(): Bluebird<IUserInterface[]> {
-        return this.users.run()
-    }
-
-    /**
-     * Busca a página com o nome
-     * 
-     * @param {string} nome
-     * @returns
-     */
-    public find(id: string): Bluebird<IUserInterface> {
-        return this.users.get(id).run()
+    constructor(models: IModelsSchema) {
+        super(models.User)
     }
 
     /**
@@ -51,38 +47,8 @@ export class UserDAO implements DAO<IUserInterface> {
      * @param {any} params
      * @returns
      */
-    public create(user: IUserInterface): Bluebird<IUserInterface> {
+    public create(user: IUser): Bluebird<IUser> {
         let _user = new User(user)
-        return (new this.users(_user)).save()
-    }
-
-    /**
-     * Atualiza a página com o id
-     * 
-     * @param {string} paginaId
-     * @param {any} newParams
-     * @param {string} userId
-     * @returns
-     */
-    public update(newUser: IUserInterface): Bluebird<IUserInterface> {
-        return this.find(newUser.id).then((oldUser: IUserInterface) => {
-            if (oldUser.email !== newUser.email || oldUser.userId !== newUser.userId) {
-                return this.users.save(newUser).then(d => newUser)
-            } else {
-                return Promise.resolve(oldUser)
-            }
-        })
-    }
-
-    /**
-     * Apaga a página com o id
-     * 
-     * @param {string} paginaId
-     * @returns
-     */
-    public delete(id: string): Bluebird<boolean> {
-        return this.find(id)
-        .then((c: any) => c.delete())
-        .then(() => true)
+        return (new this.collection(_user)).save()
     }
 }

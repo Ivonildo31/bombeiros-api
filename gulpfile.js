@@ -1,27 +1,21 @@
-/**
- * Created by clayton silva 26/06
- */
-let gulp = require('gulp')
-var serverCompiled = [ serverPath + '**/*.js', serverPath + '**/*.js.map', serverPath + '**/*.d.ts'].map(el => serverPath + el)
+var gulp = require('gulp')
 var ts = require('gulp-typescript')
 var clean = require('gulp-clean')
 var path = require('path')
+var server = require('gulp-develop-server')
 var sourcemaps = require('gulp-sourcemaps')
 var mocha = require('gulp-mocha')
-var istanbul = require('gulp-istanbul')
-var remapIstanbul = require('remap-istanbul/lib/gulpRemapIstanbul')
-var jsdoc = require('gulp-jsdoc3')
-var tsProject = ts.createProject('tsconfig.json')
-var serverPath = './server/'
 
-
+var serverPath = 'server/'
+var serverTS = [serverPath + '**/*.ts']
+var serverCompiled = ['**/*.js', '**/*.js.map', '**/*.d.ts'].map(el => serverPath + el)
 
 gulp.task('ts', ['clean'], function () {
-  return tsProject
-        .src()
-        .pipe(tsProject())
+  return gulp
+        .src(serverTS)
         .pipe(sourcemaps.init())
-        .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: path.join(__dirname, serverPath), destPath: serverPath}))
+        .pipe(ts({ module: 'commonjs', noImplicitAny: true }))
+        .pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: path.join(__dirname, serverPath), destPath: '.'}))
         .pipe(gulp.dest(serverPath))
 })
 
