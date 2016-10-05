@@ -12,6 +12,7 @@ import  * as logger from 'morgan'
 import  * as cookieParser from 'cookie-parser'
 import  * as bodyParser from 'body-parser'
 import { rethinkdbconfig } from './config/rethinkdb'
+import  * as cors from 'cors'
 /**
  * importacao das rotas
  */
@@ -26,6 +27,7 @@ class Application {
      * definicao dos objetos do banco de dados
      */
     this.app = express()
+    this.app.use(cors())
     this.app = this.handleParsers(this.app)
     this.app = this.handleLogs(this.app)
     // this.app = this.handleStatics(this.app)
@@ -92,6 +94,8 @@ class Application {
       return app
   }
 }
+
+
 
 /**
  * para enviar a aplicacao a nivel do server será sempre levado o objeto app criado ao instanciar a aplicacao
