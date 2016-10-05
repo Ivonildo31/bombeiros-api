@@ -7,8 +7,8 @@ import { IRethinkDBConfig } from '../config/rethinkdb'
 export namespace main {
     export const callRoutes = (app: express.Application, rethinkdbconfig: IRethinkDBConfig): express.Application => {
         let models = new Model(rethinkdbconfig)
-        app.use('/users', new UserRouter(models).getRouter())
-        app.use('/alerts', new AlertRouter(models).getRouter())
+        app.use('/warnings/users', new UserRouter(models).getRouter())
+        app.use('/warnings/alerts', new AlertRouter(models).getRouter())
         app.use('/', (req,res,nex) => res.json('ok'))
         return app
     }
